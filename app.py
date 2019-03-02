@@ -21,21 +21,6 @@ app.config.update(dict(
     WTF_CSRF_SECRET_KEY="a csrf secret key"
 ))
 
-
-@app.route('/user/<username>')
-def hello(username):
-    print(f'Hi, {username}')
-    return f'Hello, {username}'
-
-@app.route('/avg/<nums>')
-def avg(nums):
-    try:
-        m = np.mean([float(x.strip()) for x in nums.split(',')])
-        return str(m)
-    except Exception as e:
-        print(str(e))
-        return redirect(url_for('bad_request'))
-
 @app.route('/model/<params>')
 def model_predict(params):
     try:
