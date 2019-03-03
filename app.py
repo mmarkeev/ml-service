@@ -101,7 +101,6 @@ def upload_file():
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(filepath)
             try:
-                df = pd.read_csv(filepath)
                 return 'file uploaded'
             except Exception:
                 return redirect(url_for('bad_request'))
