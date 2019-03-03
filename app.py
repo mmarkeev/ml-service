@@ -64,13 +64,16 @@ def submit():
     form = MyForm()
     if form.validate_on_submit():
         f = form.file.data
-        df = pd.read_csv(f,sep=',')
-        pred = model.predict(df)
-        res = pd.DataFrame(pred,columns=['label'])
-        filename = form.name.data+'.csv'
-        file_path = './files/'+filename
-        res.to_csv(file_path,index=False)
-        return send_file(file_path,mimetype='text/csv',attachment_filename=filename,as_attachment=True)
+        try:
+            df = pd.read_csv(f,sep=',')
+            pred = model.predict(df)
+            res = pd.DataFrame(pred,columns=['label'])
+            filename = form.name.data+'.csv'
+            file_path = './files/'+filename
+            res.to_csv(file_path,index=False)
+            return send_file(file_path,mimetype='text/csv',attachment_filename=filename,as_attachment=True)
+        except Exception:
+            return redirect(url_for('bad_request'))
 
     return render_template('submit.html', form=form)
 
@@ -97,8 +100,11 @@ def upload_file():
             filename = secure_filename(file.filename)
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(filepath)
-            df = pd.read_csv(filepath)
-            return str(df.shape)
+            try:
+                df = pd.read_csv(filepath)
+                return 'file uploaded'
+            except Exception:
+                return redirect(url_for('bad_request'))
     return redirect('/submit')
 
 if __name__ == '__main__':
